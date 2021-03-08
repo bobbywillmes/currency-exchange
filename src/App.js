@@ -1,3 +1,4 @@
+import React from 'react'
 import './App.css';
 
 const Header = () => {
@@ -6,17 +7,6 @@ const Header = () => {
       <nav class="navbar navbar-light bg-light">
         <span class="navbar-brand mb-0 h1">Currency Exchange</span>
       </nav>
-    </div>
-  )
-}
-
-const Main = () => {
-  return (
-    <div id="main" className="container">
-      <div className="row">
-        <div className="col">(converter goes here)</div>
-        <div className="col">(converter also might go here)</div>
-      </div>
     </div>
   )
 }
@@ -31,6 +21,24 @@ const Footer = () => {
       </div>
     </div>
   )
+}
+
+class Main extends React.Component {
+  constructor(props) {
+    super(props)
+  }
+
+  render() {
+    return (
+      <div id="main" className="container">
+        <div className="row">
+          <div className="col">(Currency goes here)</div>
+          <div className="col">(converter also might go here)</div>
+        </div>
+      </div>
+    )
+  }
+
 }
 
 function App() {
