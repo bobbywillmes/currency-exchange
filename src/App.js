@@ -1,23 +1,44 @@
-import logo from './logo.svg';
 import './App.css';
+
+const Header = () => {
+  return (
+    <div id="header" className="container-fluid">
+      <nav class="navbar navbar-light bg-light">
+        <span class="navbar-brand mb-0 h1">Currency Exchange</span>
+      </nav>
+    </div>
+  )
+}
+
+const Main = () => {
+  return (
+    <div id="main" className="container">
+      <div className="row">
+        <div className="col">(converter goes here)</div>
+        <div className="col">(converter also might go here)</div>
+      </div>
+    </div>
+  )
+}
+
+const Footer = () => {
+  return (
+    <div id="footer" className="container-fluid">
+      <div className="row">
+        <div className="col">
+          Bobby Willmes &copy; 2021
+        </div>
+      </div>
+    </div>
+  )
+}
 
 function App() {
   return (
     <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
+      <Header />
+      <Main />
+      <Footer />
     </div>
   );
 }
