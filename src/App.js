@@ -23,21 +23,33 @@ const Footer = () => {
   )
 }
 
+class Rate extends React.Component {
+  render() {
+    return (
+      <span>1 {this.props.from} = {this.props.rate} {this.props.to}</span>
+    )
+  }
+}
+
 class Main extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
       response: {},
-      countries: []
+      countries: [],
+      from: 'USD',
+      to: '',
+      rate: 1
     }
+    this.currencyTo = this.currencyTo.bind(this)
   }
 
   getCountries() {
     // console.log(`getCountries()`)
+    // build countries array from rates object keys {CAD: 1.26, HKD: 7.7, ISK: 123.58} => ['CAD', 'HKD', 'ISK']
     let rates = this.state.response.rates
     let keys = Object.keys(rates)
     this.setState({ countries: keys })
-    console.log(this.state)
   }
 
   getData() {
@@ -51,8 +63,40 @@ class Main extends React.Component {
       })
   }
 
+  // do stuff when To dropdown is selected
+  currencyTo(value) {
+    // console.log(`currencyTo() ---`)
+    // console.log(value)
+
+    // if selected 'To' option is 'Select Currency', reset State of 'to' & 'rate' then return early
+    if(value === 'Select Currency') {
+      console.log(`dropdown selected Select Currency`)
+      this.setState({ to: undefined, rate: undefined })
+      return
+    }
+    // set the 'to' value (HKD)
+    this.setState({to: value})
+    let rates = this.state.response.rates
+    // loop through rates obj to find match (HKD: 7.76)
+    Object.keys(rates).forEach(key => {
+      if(key === value) {
+        // console.log(`found a match`)
+        // console.log(key + ': ' + rates[key])
+        let to = key
+        let rate = rates[key]
+        // set state (to: HKD, rate: 7.76)
+        this.setState({ to: to })
+        this.setState({ rate: rate })
+      }
+    })
+  }
+
   componentDidMount() {
     this.getData()
+  }
+
+  componentDidUpdate() {
+    console.log(this.state)
   }
 
   render() {
@@ -62,20 +106,20 @@ class Main extends React.Component {
           <div className="col">Amount</div>
           <div className="col">From</div>
           <div className="col">To</div>
-          <div className="col">New Amount</div>
+          <div className="col">Rate</div>
         </div>
         <div className="row">
           <div className="col">1</div>
           <div className="col">USD</div>
           <div className="col">
-            <select id="" className="form-select">
+            <select id="to" className="form-select" onChange={(e) => this.currencyTo(e.target.value)}>
               <option>Select Currency</option>
               {this.state.countries.map((value, index) => {
                 return <option key={value}>{value}</option>
               })}
             </select>
           </div>
-          <div className="col">0.84</div>
+          <div className="col"><Rate from={this.state.from} to={this.state.to} rate={this.state.rate}></Rate></div>
         </div>
       </div>
     )
