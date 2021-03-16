@@ -40,6 +40,30 @@ class InputAmount extends React.Component {
   }
 }
 
+class DropdownFrom extends React.Component {
+  constructor(props) {
+    super(props)
+    this.handleChange = this.handleChange.bind(this)
+  }
+
+  handleChange(e) {
+    console.log(`DropdownFrom handleChange(e)`)
+    console.log(e.target.value)
+    this.props.onChange(e.target.value)
+  }
+
+  render() {
+    return (
+      <select onChange={this.handleChange}>
+        <option>USD</option>
+        {this.props.countries.map((value, index) => {
+          return <option key={value}>{value}</option>
+        })}
+      </select>
+    )
+  }
+}
+
 class DropdownTo extends React.Component {
   constructor(props) {
     super(props)
@@ -74,6 +98,7 @@ class Rate extends React.Component {
 
 class NewAmount extends React.Component {
   render() {
+    console.log(`render NewAmount`)
     const { newAmount } = this.props
     return <span>{newAmount}</span>
   }
@@ -102,8 +127,9 @@ class Main extends React.Component {
     this.setState({ countries: keys })
   }
 
-  getData() {
-    fetch(`https://api.exchangeratesapi.io/latest?base=USD`)
+  getData(input = 'USD') {
+    console.log(`getData()`)
+    fetch(`https://api.exchangeratesapi.io/latest?base=${input}`)
       .then(res => res.json())
       .then(data => {
         this.setState({ response: data })
@@ -120,6 +146,7 @@ class Main extends React.Component {
     console.log(`${val} * ${this.state.rate} = ${newAmount}`)
     // setState of newAmount
     this.setState({ newAmount: newAmount })
+    console.log(this.state)
   }
 
   // do stuff when To dropdown is selected
@@ -148,7 +175,7 @@ class Main extends React.Component {
         this.setState({ rate: rate })
       }
     })
-    this.getNewAmount(this.state.amount)
+    // this.getNewAmount(this.state.amount)
   }
 
   componentDidMount() {
@@ -169,10 +196,20 @@ class Main extends React.Component {
 
   // do stuff when To is changed
   updateTo = val => {
-    // console.log(`updateTo`)
-    // console.log(val)
+    console.log(`updateTo`)
+    console.log(val)
     this.setState({ to: val })
     this.currencyTo(val)
+    this.getNewAmount(this.state.amount)
+  }
+
+  // do stuff when From is changed
+  updateFrom = val => {
+    console.log(`updateFrom()`)
+    console.log(val)
+    this.setState({ from: val })
+    this.getData(val)
+    this.getNewAmount(this.state.amount)
   }
 
   render() {
@@ -189,7 +226,9 @@ class Main extends React.Component {
           <div className="col">
             <InputAmount onChange={this.updateAmount}></InputAmount>
           </div>
-          <div className="col">USD</div>
+          <div className="col">
+            <DropdownFrom countries={this.state.countries} onChange={this.updateFrom}></DropdownFrom>
+          </div>
           <div className="col">
             <DropdownTo countries={this.state.countries} onChange={this.updateTo}></DropdownTo>
           </div>
