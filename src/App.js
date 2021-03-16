@@ -23,11 +23,59 @@ const Footer = () => {
   )
 }
 
+class InputAmount extends React.Component {
+  constructor(props) {
+    super(props)
+    this.handleChange = this.handleChange.bind(this)
+  }
+  
+  handleChange(e) {
+    // console.log(`InputAmount handleChange(e)`)
+    let number = parseInt(e.target.value)
+    this.props.onChange(number)
+  }
+
+  render() {
+    return <input id="amount" type="number" min="0" defaultValue="1" onChange={this.handleChange} />
+  }
+}
+
+class DropdownTo extends React.Component {
+  constructor(props) {
+    super(props)
+    this.handleChange = this.handleChange.bind(this);
+  }
+  
+  handleChange(e) {
+    console.log(`DropdownTo handleChange(e)`)
+    console.log(e.target.value)
+    this.props.onChange(e.target.value)
+  }
+
+  render() {
+    return (
+      <select onChange={this.handleChange}>
+        <option>Select Currency</option>
+        {this.props.countries.map((value, index) => {
+          return <option key={value}>{value}</option>
+        })}
+      </select>
+    )
+  }
+}
+
 class Rate extends React.Component {
   render() {
     return (
       <span>1 {this.props.from} = {this.props.rate} {this.props.to}</span>
     )
+  }
+}
+
+class NewAmount extends React.Component {
+  render() {
+    const { newAmount } = this.props
+    return <span>{newAmount}</span>
   }
 }
 
@@ -39,7 +87,9 @@ class Main extends React.Component {
       countries: [],
       from: 'USD',
       to: '',
-      rate: 1
+      rate: 1,
+      amount: 1,
+      newAmount: 1
     }
     this.currencyTo = this.currencyTo.bind(this)
   }
@@ -61,6 +111,15 @@ class Main extends React.Component {
       .then(() => {
         this.getCountries()
       })
+  }
+
+  getNewAmount(val) {
+    console.log(`getNewAmount()`)
+    // get newAmount by val * rate
+    let newAmount = val * this.state.rate
+    console.log(`${val} * ${this.state.rate} = ${newAmount}`)
+    // setState of newAmount
+    this.setState({ newAmount: newAmount })
   }
 
   // do stuff when To dropdown is selected
@@ -89,6 +148,7 @@ class Main extends React.Component {
         this.setState({ rate: rate })
       }
     })
+    this.getNewAmount(this.state.amount)
   }
 
   componentDidMount() {
@@ -97,6 +157,22 @@ class Main extends React.Component {
 
   componentDidUpdate() {
     console.log(this.state)
+    this.render()
+  }
+
+  // do stuff when Amount is changed
+  updateAmount = val => {
+    // console.log(`updateAmount`)
+    this.setState({ amount: val })
+    this.getNewAmount(val)
+  }
+
+  // do stuff when To is changed
+  updateTo = val => {
+    // console.log(`updateTo`)
+    // console.log(val)
+    this.setState({ to: val })
+    this.currencyTo(val)
   }
 
   render() {
@@ -107,19 +183,22 @@ class Main extends React.Component {
           <div className="col">From</div>
           <div className="col">To</div>
           <div className="col">Rate</div>
+          <div className="col">New Amount</div>
         </div>
         <div className="row">
-          <div className="col">1</div>
+          <div className="col">
+            <InputAmount onChange={this.updateAmount}></InputAmount>
+          </div>
           <div className="col">USD</div>
           <div className="col">
-            <select id="to" className="form-select" onChange={(e) => this.currencyTo(e.target.value)}>
-              <option>Select Currency</option>
-              {this.state.countries.map((value, index) => {
-                return <option key={value}>{value}</option>
-              })}
-            </select>
+            <DropdownTo countries={this.state.countries} onChange={this.updateTo}></DropdownTo>
           </div>
-          <div className="col"><Rate from={this.state.from} to={this.state.to} rate={this.state.rate}></Rate></div>
+          <div className="col">
+            <Rate from={this.state.from} to={this.state.to} rate={this.state.rate}></Rate>
+          </div>
+          <div className="col">
+            <NewAmount newAmount={this.state.newAmount} amount={this.state.amount} rate={this.state.rate}></NewAmount>
+          </div>
         </div>
       </div>
     )
