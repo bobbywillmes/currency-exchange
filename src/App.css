@@ -45,3 +45,18 @@
 #amount {
   width: 75px;
 }
+
+#main .row:nth-child(2) {
+  height: 50px;
+}
+
+#ratesTableWrap {
+  max-height: 400px;
+  overflow-y: auto;
+}
+
+#ratesTableWrap thead tr:nth-child(2) th {
+  background: #fff;
+  position: sticky;
+  top: 0;
+}
