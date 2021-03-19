@@ -99,8 +99,7 @@ class Rate extends React.Component {
 class NewAmount extends React.Component {
   render() {
     console.log(`render NewAmount`)
-    const { newAmount } = this.props
-    return <span>{newAmount}</span>
+    return <span>{this.props.newAmount}</span>
   }
 }
 
@@ -120,7 +119,7 @@ class RatesTable extends React.Component {
         <tbody>
           {Object.keys(this.props.rates).map((key, value) => {
             return (
-              <tr>
+              <tr key={key}>
                 <td>{key}</td>
                 <td>{this.props.rates[key]}</td>
               </tr>
@@ -172,14 +171,14 @@ class Main extends React.Component {
       })
   }
 
-  getNewAmount(val) {
-    console.log(`getNewAmount()`)
+  getNewAmount(val = this.state.amount) {
+    console.log(`getNewAmount() val: ${val} rate: ${this.state.rate} amount: ${this.state.amount}`)
     // get newAmount by val * rate
     let newAmount = val * this.state.rate
     console.log(`${val} * ${this.state.rate} = ${newAmount}`)
     // setState of newAmount
     this.setState({ newAmount: newAmount })
-    console.log(this.state)
+    // console.log(this.state)
   }
 
   // do stuff when To dropdown is selected
@@ -187,28 +186,30 @@ class Main extends React.Component {
     // console.log(`currencyTo() ---`)
     // console.log(value)
 
-    // if selected 'To' option is 'Select Currency', reset State of 'to' & 'rate' then return early
+    // if selected 'To' option is 'Select Currency', reset State of 'to', 'rate' & 'newAmount' then return early
     if (value === 'Select Currency') {
       console.log(`dropdown selected Select Currency`)
-      this.setState({ to: undefined, rate: undefined })
+      this.setState({ to: undefined, rate: undefined, newAmount: undefined })
       return
     }
-    // set the 'to' value (HKD)
-    this.setState({ to: value })
+
     let rates = this.state.response.rates
     // loop through rates obj to find match (HKD: 7.76)
     Object.keys(rates).forEach(key => {
       if (key === value) {
-        // console.log(`found a match`)
-        // console.log(key + ': ' + rates[key])
+        console.log(`found a match`)
+        console.log(key + ': ' + rates[key])
         let to = key
-        let rate = rates[key]
+        let newRate = rates[key]
         // set state (to: HKD, rate: 7.76)
         this.setState({ to: to })
-        this.setState({ rate: rate })
+        this.setState({ rate: newRate })
+
+        // get newAmount & set state
+        let newAmount = newRate * this.state.amount
+        this.setState({ newAmount: newAmount })
       }
     })
-    // this.getNewAmount(this.state.amount)
   }
 
   componentDidMount() {
@@ -224,16 +225,14 @@ class Main extends React.Component {
   updateAmount = val => {
     // console.log(`updateAmount`)
     this.setState({ amount: val })
-    this.getNewAmount(val)
+    this.getNewAmount()
   }
 
   // do stuff when To is changed
   updateTo = val => {
-    console.log(`updateTo`)
-    console.log(val)
+    // consolese.log(val)
     this.setState({ to: val })
     this.currencyTo(val)
-    this.getNewAmount(this.state.amount)
   }
 
   // do stuff when From is changed
@@ -242,7 +241,6 @@ class Main extends React.Component {
     console.log(val)
     this.setState({ from: val })
     this.getData(val)
-    this.getNewAmount(this.state.amount)
     // reset scroll position of rates table
     let ratesTable = document.getElementById('ratesTableWrap')
     ratesTable.scrollTop = 0
@@ -272,7 +270,7 @@ class Main extends React.Component {
             <Rate from={this.state.from} to={this.state.to} rate={this.state.rate}></Rate>
           </div>
           <div className="col">
-            <NewAmount newAmount={this.state.newAmount} amount={this.state.amount} rate={this.state.rate}></NewAmount>
+            <NewAmount newAmount={this.state.newAmount}></NewAmount>
           </div>
         </div>
         <br />
