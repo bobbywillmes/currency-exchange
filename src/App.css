@@ -60,3 +60,7 @@
   position: sticky;
   top: 0;
 }
+
+#ratesTableWrap tbody tr:nth-child(even) {
+  background: #eee;
+}

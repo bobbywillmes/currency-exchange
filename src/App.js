@@ -1,4 +1,5 @@
 import React from 'react'
+import '@fortawesome/fontawesome-free/css/all.min.css';
 import './App.css';
 
 const Header = () => {
@@ -54,7 +55,7 @@ class DropdownFrom extends React.Component {
 
   render() {
     return (
-      <select onChange={this.handleChange}>
+      <select id="from" onChange={this.handleChange}>
         <option>USD</option>
         {this.props.countries.map((value, index) => {
           return <option key={value}>{value}</option>
@@ -78,12 +79,20 @@ class DropdownTo extends React.Component {
 
   render() {
     return (
-      <select onChange={this.handleChange}>
+      <select id="to" onChange={this.handleChange}>
         <option>Select Currency</option>
         {this.props.countries.map((value, index) => {
           return <option key={value}>{value}</option>
         })}
       </select>
+    )
+  }
+}
+
+class SwapDropdowns extends React.Component {
+  render() {
+    return (
+      <button className="btn btn-outline-dark"><i className="fas fa-exchange-alt"></i></button>
     )
   }
 }
@@ -98,7 +107,7 @@ class Rate extends React.Component {
 
 class NewAmount extends React.Component {
   render() {
-    console.log(`render NewAmount`)
+    // console.log(`render NewAmount`)
     return <span>{this.props.newAmount}</span>
   }
 }
@@ -157,7 +166,7 @@ class Main extends React.Component {
   }
 
   getData(input = 'USD') {
-    console.log(`getData()`)
+    console.log(`getData(): ${input}`)
     fetch(`https://api.exchangeratesapi.io/latest?base=${input}`)
       .then(res => res.json())
       .then(data => {
@@ -165,14 +174,21 @@ class Main extends React.Component {
           response: data,
           rates: data.rates
         })
+        console.log(this.state)
       })
       .then(() => {
-        this.getCountries()
+        if(this.state.countries.length === 0) {
+          this.getCountries()
+        }
+      })
+      .then(() => {
+          this.currencyTo(this.state.to)
+          this.getNewAmount()
       })
   }
 
   getNewAmount(val = this.state.amount) {
-    console.log(`getNewAmount() val: ${val} rate: ${this.state.rate} amount: ${this.state.amount}`)
+    console.log(`getNewAmount() val: ${val} rate: ${this.state.rate}`)
     // get newAmount by val * rate
     let newAmount = val * this.state.rate
     console.log(`${val} * ${this.state.rate} = ${newAmount}`)
@@ -217,7 +233,7 @@ class Main extends React.Component {
   }
 
   componentDidUpdate() {
-    console.log(this.state)
+    // console.log(this.state)
     this.render()
   }
 
@@ -225,7 +241,7 @@ class Main extends React.Component {
   updateAmount = val => {
     // console.log(`updateAmount`)
     this.setState({ amount: val })
-    this.getNewAmount()
+    this.getNewAmount(val)
   }
 
   // do stuff when To is changed
@@ -246,12 +262,35 @@ class Main extends React.Component {
     ratesTable.scrollTop = 0
   }
 
+  // do stuff when Swap button is clicked
+  swap = () => {
+    console.log(`swap() -----`)
+    // get the old states & swap them
+    let newFrom = this.state.to
+    let newTo = this.state.from
+    // assign the new States
+    this.setState({ from: newFrom })
+    this.setState({ to: newTo })
+    // get dropdown elements & update their selection
+    let fromEl = document.getElementById('from')
+    let toEl = document.getElementById('to')
+    fromEl.value = newFrom
+    toEl.value = newTo
+    // reset scroll position of rates table
+    let ratesTable = document.getElementById('ratesTableWrap')
+    ratesTable.scrollTop = 0
+    this.getData(newFrom)
+    // this.updateFrom(newFrom)
+    this.currencyTo(newTo)
+  }
+
   render() {
     return (
       <div id="main" className="container">
         <div className="row">
           <div className="col">Amount</div>
           <div className="col">From</div>
+          <div className="col"> </div>
           <div className="col">To</div>
           <div className="col">Rate</div>
           <div className="col">New Amount</div>
@@ -262,6 +301,11 @@ class Main extends React.Component {
           </div>
           <div className="col">
             <DropdownFrom countries={this.state.countries} onChange={this.updateFrom}></DropdownFrom>
+          </div>
+          <div className="col">
+            <span onClick={this.swap}>
+              <SwapDropdowns></SwapDropdowns>
+            </span>
           </div>
           <div className="col">
             <DropdownTo countries={this.state.countries} onChange={this.updateTo}></DropdownTo>
