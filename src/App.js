@@ -17,7 +17,7 @@ const Footer = () => {
     <div id="footer" className="container-fluid">
       <div className="row">
         <div className="col">
-          Bobby Willmes &copy; 2021
+          <a href="https://cocky-euler-a69577.netlify.app/" target="_blank" rel="noreferrer">Bobby Willmes</a> &copy; 2021
         </div>
       </div>
     </div>
@@ -80,7 +80,7 @@ class DropdownTo extends React.Component {
   render() {
     return (
       <select id="to" onChange={this.handleChange}>
-        <option>Select Currency</option>
+        <option>Select</option>
         {this.props.countries.map((value, index) => {
           return <option key={value}>{value}</option>
         })}
@@ -92,7 +92,7 @@ class DropdownTo extends React.Component {
 class SwapDropdowns extends React.Component {
   render() {
     return (
-      <button className="btn btn-outline-dark"><i className="fas fa-exchange-alt"></i></button>
+      <button className="btn btn-outline-dark mt-2"><i className="fas fa-exchange-alt"></i></button>
     )
   }
 }
@@ -288,38 +288,35 @@ class Main extends React.Component {
     return (
       <div id="main" className="container">
         <div className="row">
-          <div className="col">Amount</div>
-          <div className="col">From</div>
-          <div className="col"> </div>
-          <div className="col">To</div>
-          <div className="col">Rate</div>
-          <div className="col">New Amount</div>
-        </div>
-        <div className="row">
-          <div className="col">
+          <div className="col-12 col-md-2">
+            <div className="title">Amount</div>
             <InputAmount onChange={this.updateAmount}></InputAmount>
           </div>
-          <div className="col">
+          <div className="col-4 col-md-2">
+            <div className="title">From</div>
             <DropdownFrom countries={this.state.countries} onChange={this.updateFrom}></DropdownFrom>
           </div>
-          <div className="col">
+          <div className="col-4 col-md-2">
             <span onClick={this.swap}>
               <SwapDropdowns></SwapDropdowns>
             </span>
           </div>
-          <div className="col">
+          <div className="col-4 col-md-2">
+            <div className="title">To</div>
             <DropdownTo countries={this.state.countries} onChange={this.updateTo}></DropdownTo>
           </div>
-          <div className="col">
+          <div className="col-12 col-md-2">
+            <div className="title">Rate</div>
             <Rate from={this.state.from} to={this.state.to} rate={this.state.rate}></Rate>
           </div>
-          <div className="col">
+          <div className="col-12 col-md-2">
+            <div className="title">New Amount</div>
             <NewAmount newAmount={this.state.newAmount}></NewAmount>
           </div>
         </div>
         <br />
         <div className="row">
-          <div id="ratesTableWrap" className="col-3">
+          <div id="ratesTableWrap" className="col col-md-5 mx-auto">
             <RatesTable base={this.state.from} rates={this.state.rates}></RatesTable>
           </div>
         </div>
