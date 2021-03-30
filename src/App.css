@@ -28,17 +28,17 @@
   text-decoration: 1px solid underline; 
 }
 
-#ratesTableWrap {
+#ratesTableWrap, #ratesOverTimeWrap {
   max-height: 400px;
   overflow-y: auto;
 }
 
-#ratesTableWrap thead tr:nth-child(2) th {
+#ratesTableWrap thead tr:nth-child(2) th, #ratesOverTimeWrap thead tr:nth-child(1) th {
   background: #fff;
   position: sticky;
   top: 0;
 }
 
-#ratesTableWrap tbody tr:nth-child(even) {
+#ratesTableWrap tbody tr:nth-child(even), #ratesOverTimeWrap tbody tr:nth-child(even) {
   background: #eee;
 }
