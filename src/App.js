@@ -170,7 +170,7 @@ buildChart = () => {
   // set chart options
   Chart.defaults.global.defaultFontFamily = "'PT Sans', sans-serif"
   Chart.defaults.global.legend.display = false;
-  const {height: graphHeight, width: graphWidth} = myChartRef.canvas;
+  const {height: graphHeight} = myChartRef.canvas;
   // line stroke
   let gradientStroke = myChartRef.createLinearGradient(500, 0, 100, 0);
       gradientStroke.addColorStop(0, "#80b6f4");
@@ -341,7 +341,7 @@ class Main extends React.Component {
 
         // sort the object's properties (dates)
         function sortObjectByKeys(o) {
-          return Object.keys(o).sort().reduce((r, k) => (r[k] = o[k], r), {});
+          return Object.keys(o).sort().reduce((obj, key) => { obj[key] = o[key]; return obj }, {})
         }
         let sortedData = sortObjectByKeys(data.rates)
         console.log(sortedData)
